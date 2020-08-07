@@ -3,6 +3,9 @@
 JS library for SAP Business One Service Layer API.
 
 ### How Install it ? ###
+```
+npm install @nestebe/b1-service-layer@1.0.0
+```
 
 
 ### Usage ###
