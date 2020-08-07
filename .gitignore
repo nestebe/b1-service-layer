@@ -3,3 +3,4 @@ package-lock.json
 test/test - Copie.js
 test/test.js
 .npmrc
+.vscode/settings.json

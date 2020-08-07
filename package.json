@@ -1,6 +1,6 @@
 {
   "name": "@nestebe/b1-service-layer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JS library for SAP Business One Service Layer API",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "eslint": "^7.6.0",
-    "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.22.0",
