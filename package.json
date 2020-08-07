@@ -1,6 +1,6 @@
 {
-  "name": "@nestebe/b1-service-layer",
-  "version": "1.0.1",
+  "name": "b1-service-layer",
+  "version": "1.0.2",
   "description": "JS library for SAP Business One Service Layer API",
   "main": "index.js",
   "scripts": {
@@ -11,13 +11,10 @@
     "url": "git+https://github.com/nestebe/b1-service-layer.git"
   },
   "author": "Nicolas ESTEBE",
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.19.2",
     "moment": "^2.24.0"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   },
   "bugs": {
     "url": "https://github.com/nestebe/b1-service-layer/issues"
