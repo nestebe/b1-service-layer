@@ -1,6 +1,6 @@
 {
   "name": "b1-service-layer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "JS library for SAP Business One Service Layer API",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,12 @@
     "axios": "^0.19.2",
     "moment": "^2.24.0"
   },
+  "keywords": [
+    "sap",
+    "service",
+    "layer",
+    "b1"
+  ],
   "bugs": {
     "url": "https://github.com/nestebe/b1-service-layer/issues"
   },

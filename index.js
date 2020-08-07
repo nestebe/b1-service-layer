@@ -3,7 +3,7 @@ const moment = require('moment')
 const https = require('https')
 
 class ServiceLayer {
-  constructor () {
+  constructor() {
     this.instance = null
     this.sessionTimeout = 0
     this.startSessionTime = null
@@ -15,7 +15,7 @@ class ServiceLayer {
     *Create a new session
      *config object: {host, company, password, username}
   */
-  async createSession (config, debug = false) {
+  async createSession(config, debug = false) {
     this.config = config
     axios.defaults.withCredentials = true
 
@@ -59,7 +59,7 @@ class ServiceLayer {
   /**
    * Refresh session if expired
    */
-  async refreshSession () {
+  async refreshSession() {
     if (this.startSessionTime.isAfter(this.endSessionTime)) {
       await this.createSession(this.config)
     }
@@ -69,7 +69,7 @@ class ServiceLayer {
     * Simple service layer query (GET Method)
     *
    */
-  async query (q) {
+  async query(q) {
     await this.refreshSession()
     const result = await this.instance.get(q)
     return result.data
@@ -80,7 +80,7 @@ class ServiceLayer {
    * @param {String} query
    * (eg: ProductionOrders?$select=AbsoluteEntry, DocumentNumber)
    */
-  async find (query) {
+  async find(query) {
     await this.refreshSession()
 
     let result = []
@@ -102,7 +102,7 @@ class ServiceLayer {
   /**
    * Get Ressource (eg Orders(10))
   */
-  async get (ressource) {
+  async get(ressource) {
     try {
       await this.refreshSession()
       const result = await this.instance.get(ressource)
@@ -127,7 +127,7 @@ class ServiceLayer {
   /**
   * Update Ressource
   */
-  async put (ressource, data) {
+  async put(ressource, data) {
     try {
       await this.refreshSession()
       const result = await this.instance.put(ressource, data)
@@ -152,7 +152,7 @@ class ServiceLayer {
   /**
     * Update Ressource partially
    */
-  async patch (ressource, data) {
+  async patch(ressource, data) {
     try {
       await this.refreshSession()
       const result = await this.instance.patch(ressource, data)
@@ -177,7 +177,7 @@ class ServiceLayer {
   /**
     * Create ressource
    */
-  async post (ressource, data) {
+  async post(ressource, data) {
     try {
       await this.refreshSession()
       const result = await this.instance.post(ressource, data)
