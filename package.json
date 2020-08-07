@@ -1,0 +1,22 @@
+{
+  "name": "b1-service-layer",
+  "version": "1.0.0",
+  "description": "JS library for SAP Business One Service Layer API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nestebe/service-layer.git"
+  },
+  "author": "Nicolas ESTEBE",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "moment": "^2.24.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}
