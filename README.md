@@ -19,11 +19,12 @@ Set your config object
 ```js
     var config = {
         "host": "http://<server>",
-        "port": 50001,
-        "version": "v2",
+        // "port": 50001, // default
+        // "version": "v2", // default
         "username": "b1User",
         "password": "b1Password",
-        "company": "b1Database"
+        "company": "b1Database",
+        // "debug": false // default
     }
 ```
 

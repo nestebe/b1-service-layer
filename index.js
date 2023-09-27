@@ -8,15 +8,22 @@ class ServiceLayer {
     this.sessionTimeout = 0;
     this.startSessionTime = null;
     this.endSessionTime = null;
-    this.config = null;
+    this.config = { 
+      port: 50001,
+      version: 'v2',
+      debug: false
+    };
   }
 
   /**
-   *Create a new session
-   *config object: {host, company, password, username}
+   * Create a new session
+   * config object: {host, company, password, username}
    */
-  async createSession(config, debug = false) {
-    this.config = config;
+  async createSession(config) {
+    this.config = config = { ...this.config, ...config };
+    if (config.debug) {
+      console.log("Config parameters",this.config);
+    }
     axios.defaults.withCredentials = true;
 
     if (config.host.slice(-1) === '/') {
@@ -46,7 +53,7 @@ class ServiceLayer {
     });
 
     this.instance.defaults.headers.common.Cookie = `B1SESSION=${result.data.SessionId};CompanyDB=${config.company}`;
-    if (debug) {
+    if (this.config.debug) {
       console.log(this.instance.defaults.headers.common.Cookie);
     }
 
@@ -54,6 +61,11 @@ class ServiceLayer {
     this.startSessionTime = moment();
     this.endSessionTime = moment();
     this.endSessionTime.add(this.sessionTimeout - 1, 'minutes');
+    if (this.config.debug) {
+      console.log(`Session Timeout: ${this.sessionTimeout}`);
+      console.log(`Start Session Time: ${this.startSessionTime}`);
+      console.log(`End Session Time: ${this.endSessionTime}`);
+    } 
   }
 
   /**
@@ -62,6 +74,9 @@ class ServiceLayer {
   async refreshSession() {
     const now = moment();
     if (now.isAfter(this.endSessionTime)) {
+      if (this.config.debug) {
+        console.warn("The session is expired. Refreshing...");
+      }
       await this.createSession(this.config);
     }
   }
