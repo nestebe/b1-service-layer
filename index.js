@@ -1,5 +1,5 @@
 import axios from 'axios';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import https from 'https';
 
 class ServiceLayer {
@@ -58,8 +58,8 @@ class ServiceLayer {
     }
 
     this.sessionTimeout = result.data.SessionTimeout;
-    this.startSessionTime = moment();
-    this.endSessionTime = moment();
+    this.startSessionTime = dayjs();
+    this.endSessionTime = dayjs();
     this.endSessionTime.add(this.sessionTimeout - 1, 'minutes');
     if (this.config.debug) {
       console.log(`Session Timeout: ${this.sessionTimeout}`);
@@ -72,7 +72,7 @@ class ServiceLayer {
    * Refresh session if expired
    */
   async refreshSession() {
-    const now = moment();
+    const now = dayjs();
     if (now.isAfter(this.endSessionTime)) {
       if (this.config.debug) {
         console.warn("The session is expired. Refreshing...");
