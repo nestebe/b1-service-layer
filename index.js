@@ -28,14 +28,14 @@ class ServiceLayer {
         httpsAgent: new https.Agent({
           rejectUnauthorized: false
         }),
-        baseURL: `${config.host}:${config.port}/b1s/v2/`
+        baseURL: `${config.host}:${config.port}/b1s/${config.version}/`
       });
     } else {
       this.instance = axios.create({
         httpsAgent: new https.Agent({
           rejectUnauthorized: false
         }),
-        baseURL: `${config.host}/b1s/v2/`
+        baseURL: `${config.host}/b1s/${config.version}/`
       });
     }
 
