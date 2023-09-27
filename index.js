@@ -1,6 +1,6 @@
-const axios = require('axios')
-const moment = require('moment')
-const https = require('https')
+import axios from 'axios';
+import moment from 'moment';
+import https from 'https';
 
 class ServiceLayer {
   constructor() {
@@ -200,4 +200,8 @@ class ServiceLayer {
   }
 }
 
-module.exports = ServiceLayer
+function ServiceLayerFactory() {
+  return new ServiceLayer()
+}
+
+export default ServiceLayerFactory();
