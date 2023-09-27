@@ -60,7 +60,8 @@ class ServiceLayer {
    * Refresh session if expired
    */
   async refreshSession() {
-    if (this.startSessionTime.isAfter(this.endSessionTime)) {
+    const now = moment();
+    if (now.isAfter(this.endSessionTime)) {
       await this.createSession(this.config);
     }
   }
