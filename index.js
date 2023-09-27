@@ -59,8 +59,7 @@ class ServiceLayer {
 
     this.sessionTimeout = result.data.SessionTimeout;
     this.startSessionTime = dayjs();
-    this.endSessionTime = dayjs();
-    this.endSessionTime.add(this.sessionTimeout - 1, 'minutes');
+    this.endSessionTime = this.startSessionTime.add(this.sessionTimeout - 1, 'minute');
     if (this.config.debug) {
       console.log(`Session Timeout: ${this.sessionTimeout}`);
       console.log(`Start Session Time: ${this.startSessionTime}`);
