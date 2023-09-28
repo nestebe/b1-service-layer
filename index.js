@@ -123,20 +123,7 @@ class ServiceLayer {
       const result = await this.instance.get(ressource);
       return result.data;
     } catch (error) {
-      if (error.response) {
-        console.error('ERROR RESPONSE SERVICE LAYER:');
-        console.error(error.response.data);
-        console.error(error.response.status);
-        console.error(error.response.headers);
-        return { error: true, message: error.response.data };
-      }
-      if (error.request) {
-        console.error('ERROR REQUEST');
-        return { error: true, message: 'ERROR REQUEST' };
-      }
-      // Something happened in setting up the request and triggered an Error
-      console.log('Error', error.message);
-      return { error: true, message: error.message };
+      return this.parseError(error);
     }
   }
 
@@ -149,20 +136,7 @@ class ServiceLayer {
       const result = await this.instance.put(ressource, data);
       return result.data;
     } catch (error) {
-      if (error.response) {
-        console.error('ERROR RESPONSE SERVICE LAYER:');
-        console.error(error.response.data);
-        console.error(error.response.status);
-        console.error(error.response.headers);
-        return { error: true, message: error.response.data };
-      }
-      if (error.request) {
-        console.error('ERROR REQUEST');
-        return { error: true, message: 'ERROR REQUEST' };
-      }
-      // Something happened in setting up the request and triggered an Error
-      console.error('Error', error.message);
-      return { error: true, message: error.message };
+      return this.parseError(error);
     }
   }
 
@@ -175,20 +149,7 @@ class ServiceLayer {
       const result = await this.instance.patch(ressource, data);
       return result.data;
     } catch (error) {
-      if (error.response) {
-        console.error('ERROR RESPONSE SERVICE LAYER:');
-        console.error(error.response.data);
-        console.error(error.response.status);
-        console.error(error.response.headers);
-        return { error: true, message: error.response.data };
-      }
-      if (error.request) {
-        console.error('ERROR REQUEST');
-        return { error: true, message: 'ERROR REQUEST' };
-      }
-      // Something happened in setting up the request and triggered an Error
-      console.error('Error', error.message);
-      return { error: true, message: error.message };
+      return this.parseError(error);
     }
   }
 
@@ -201,21 +162,29 @@ class ServiceLayer {
       const result = await this.instance.post(ressource, data);
       return result.data;
     } catch (error) {
-      if (error.response) {
-        console.error('ERROR RESPONSE SERVICE LAYER:');
-        console.error(error.response.data);
-        console.error(error.response.status);
-        console.error(error.response.headers);
-        return { error: true, message: error.response.data };
-      }
-      if (error.request) {
-        console.error('ERROR REQUEST');
-        return { error: true, message: 'ERROR REQUEST' };
-      }
-      // Something happened in setting up the request and triggered an Error
-      console.error('Error', error.message);
-      return { error: true, message: error.message };
+      return this.parseError(error);
     }
+  }
+
+  /**
+   * Parse error message
+   */
+
+  parseError({response, request, message}) {
+    if (response) {
+      console.error('ERROR RESPONSE SERVICE LAYER:');
+      console.error(response.data);
+      console.error(response.status);
+      console.error(response.headers);
+      return { error: true, message: response.data };
+    }
+    if (request) {
+      console.error('ERROR REQUEST');
+      return { error: true, message: 'ERROR REQUEST' };
+    }
+    // Something happened in setting up the request and triggered an Error
+    console.error('Error', message);
+    return { error: true, message: message };
   }
 }
 
