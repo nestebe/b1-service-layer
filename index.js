@@ -3,6 +3,10 @@ import dayjs from 'dayjs';
 import https from 'https';
 
 class ServiceLayer {
+  /**
+   * Represents the constructor of the B1ServiceLayer class.
+   * @constructor
+   */
   constructor() {
     this.instance = null;
     this.sessionTimeout = 0;
@@ -82,20 +86,24 @@ class ServiceLayer {
 
   /**
    * Simple service layer query (GET Method)
-   *
+   * @param {String} q - The query string.
+   * @param {Object} options - Axios options object.
+   * @returns {Promise<Array>} - A promise that resolves to an array of records.
    */
-  async query(q) {
+  async query(q, options = {}) {
     await this.refreshSession();
-    const result = await this.instance.get(q);
+    const result = await this.instance.get(q, options);
     return result.data;
   }
 
   /**
-   * Find Ressource
-   * @param {String} query
+   * Finds records based on the provided query and options.
+   * @param {String} query - The query string.
+   * @param {Object} options - Axios options object.
+   * @returns {Promise<Array>} - A promise that resolves to an array of records.
    * (eg: ProductionOrders?$select=AbsoluteEntry, DocumentNumber)
    */
-  async find(query) {
+  async find(query, options = {}) {
     await this.refreshSession();
 
     let result = [];
@@ -103,11 +111,11 @@ class ServiceLayer {
     result = result.concat(request.value);
 
     if (request['@odata.nextLink']) {
-      request = await this.query(request['@odata.nextLink']);
+      request = await this.query(request['@odata.nextLink'], options);
       result = result.concat(request.value);
 
       while (request['@odata.nextLink']) {
-        request = await this.query(request['@odata.nextLink']);
+        request = await this.query(request['@odata.nextLink'], options);
         result = result.concat(request.value);
       }
     }
@@ -115,12 +123,15 @@ class ServiceLayer {
   }
 
   /**
-   * Get Ressource (eg Orders(10))
+   * Get Resource (eg Orders(10))
+   * @param {String} query - The query string.
+   * @param {Object} options - Axios options object.
+   * @returns {Promise<Array>} - A promise that resolves to an array of records.
    */
-  async get(ressource) {
+  async get(resource, options = {}) {
     try {
       await this.refreshSession();
-      const result = await this.instance.get(ressource);
+      const result = await this.instance.get(resource, options);
       return result.data;
     } catch (error) {
       return this.parseError(error);
@@ -128,12 +139,12 @@ class ServiceLayer {
   }
 
   /**
-   * Update Ressource
+   * Update Resource
    */
-  async put(ressource, data) {
+  async put(resource, data) {
     try {
       await this.refreshSession();
-      const result = await this.instance.put(ressource, data);
+      const result = await this.instance.put(resource, data);
       return result.data;
     } catch (error) {
       return this.parseError(error);
@@ -141,12 +152,12 @@ class ServiceLayer {
   }
 
   /**
-   * Update Ressource partially
+   * Update Resource partially
    */
-  async patch(ressource, data) {
+  async patch(resource, data) {
     try {
       await this.refreshSession();
-      const result = await this.instance.patch(ressource, data);
+      const result = await this.instance.patch(resource, data);
       return result.data;
     } catch (error) {
       return this.parseError(error);
@@ -154,12 +165,12 @@ class ServiceLayer {
   }
 
   /**
-   * Create ressource
+   * Create resource
    */
-  async post(ressource, data) {
+  async post(resource, data) {
     try {
       await this.refreshSession();
-      const result = await this.instance.post(ressource, data);
+      const result = await this.instance.post(resource, data);
       return result.data;
     } catch (error) {
       return this.parseError(error);

@@ -64,6 +64,14 @@ return =>
 /*Get open orders by DocNum*/
 var list = await sl.get("Orders?$filter=DocumentStatus eq  'bost_Open'")
 
+/* or 
+var list = await sl.get("Orders", {
+    params: {
+     '$filter':"DocumentStatus eq  'bost_Open'")
+    }
+}
+*/
+
 /*
 return =>
  {"@odata.context": "https://<server>:50000/b1s/v2/$metadata#Orders",
