@@ -1,9 +1,12 @@
 {
   "name": "b1-service-layer",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "JS library for SAP Business One Service Layer API",
+  "type": "module",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint --ignore-path .gitignore \"./**/*.js\"",
+    "lint:fix": "npm run lint -- --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,8 +16,8 @@
   "author": "Nicolas ESTEBE",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.2",
-    "moment": "^2.24.0"
+    "axios": "^1.5.1",
+    "dayjs": "^1.11.10"
   },
   "keywords": [
     "sap",
@@ -30,12 +33,13 @@
     "test": "test"
   },
   "devDependencies": {
-    "eslint": "^7.6.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-loader": "^4.0.2",
-    "eslint-plugin-import": "^2.22.0",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^3.0.3"
   }
 }

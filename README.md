@@ -7,11 +7,10 @@ JS library for SAP Business One Service Layer API.
 npm i b1-service-layer --save
 ```
 
-
 ### Usage ###
 
 ```js
-const ServiceLayer = require("b1-service-layer")
+import sl from "b1-service-layer"
 ```
 
 Set your config object
@@ -19,18 +18,18 @@ Set your config object
 ```js
     var config = {
         "host": "http://<server>",
-        "port": 50001,
-        "version": "v2",
         "username": "b1User",
         "password": "b1Password",
-        "company": "b1Database"
+        "company": "b1Database",
+        // "port": 50001, // default
+        // "version": "v2", // default
+        // "debug": false // default
     }
 ```
 
 Create a new service layer session
 
 ```javascript
-   var sl = new ServiceLayer()
    await sl.createSession(config)
 ```
 
@@ -64,6 +63,14 @@ return =>
            
 /*Get open orders by DocNum*/
 var list = await sl.get("Orders?$filter=DocumentStatus eq  'bost_Open'")
+
+/* or 
+var list = await sl.get("Orders", {
+    params: {
+     '$filter':"DocumentStatus eq  'bost_Open'")
+    }
+}
+*/
 
 /*
 return =>
