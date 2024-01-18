@@ -183,14 +183,17 @@ class ServiceLayer {
 
   parseError({response, request, message}) {
     if (response) {
-      console.error('ERROR RESPONSE SERVICE LAYER:');
-      console.error(response.data);
-      console.error(response.status);
-      console.error(response.headers);
+      console.error('🟥 \x1b[31m%s\x1b[0m', 'ERROR RESPONSE SERVICE LAYER');
+      console.error('%s: \x1b[36m%s\x1b[0m', "URL", request.path);
+      console.error("Status: \x1b[33m%s\x1b[0m - %s", response.status, 
+        response.statusText);
+      console.error("Data:", response.data);
+      console.error("Headers:", response.headers);
       return { error: true, message: response.data };
     }
     if (request) {
-      console.error('ERROR REQUEST');
+      console.error('🟥 \x1b[31m%s\x1b[0m','ERROR REQUEST');
+      console.error('%s: \x1b[36m%s\x1b[0m', "URL", request.path);
       return { error: true, message: 'ERROR REQUEST' };
     }
     // Something happened in setting up the request and triggered an Error
