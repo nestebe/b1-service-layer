@@ -1,140 +1,176 @@
-# README #
+# b1-service-layer
 
-JS library for SAP Business One Service Layer API.
+TypeScript client for the SAP Business One Service Layer API.
 
-### How Install it ? ###
+- Typed API, ESM and CommonJS builds
+- Automatic login, session renewal before timeout, and re-login + single replay on `401`
+- Concurrent requests share a single login
+- Automatic pagination (`@odata.nextLink` in v2, `odata.nextLink` in v1)
+- One error type, `ServiceLayerError`, that never contains your password or session cookie
+- `ROUTEID` cookie support for load-balanced Service Layer installations
+
+Requires Node.js 18 or later.
+
+## Installation
+
+```sh
+npm i b1-service-layer
 ```
-npm i b1-service-layer --save
+
+## Usage
+
+```ts
+import { ServiceLayer } from 'b1-service-layer';
+
+const sl = new ServiceLayer({
+  host: 'https://my-server',
+  company: 'SBODEMO',
+  username: 'manager',
+  password: 'secret'
+  // port: 50001,               // default; null or 0 when the port is in host / behind a proxy
+  // version: 'v2',             // default; 'v1' also supported
+  // language: 22,              // B1 language code sent at login
+  // rejectUnauthorized: false, // default; set true when the TLS certificate is trusted
+  // timeout: 0,                // request timeout in ms, 0 = none
+  // debug: false,              // log requests and session events
+  // logger: console            // any object with debug/warn/error
+});
+
+// Optional: the session is opened on the first request anyway.
+await sl.createSession();
 ```
 
-### Usage ###
+The 1.x style still works with the shared default instance:
 
 ```js
-import sl from "b1-service-layer"
+import sl from 'b1-service-layer';
+
+await sl.createSession(config);
 ```
 
-Set your config object
+### Reading
+
+```ts
+interface Order {
+  DocEntry: number;
+  DocNum: number;
+  CardCode: string;
+}
+
+// A single entity
+const order = await sl.get<Order>('Orders(100)');
+
+// One page of a collection (raw OData response)
+const page = await sl.get<{ value: Order[] }>("Orders?$filter=DocumentStatus eq 'bost_Open'");
+
+// Query parameters can also be passed as axios options
+const top = await sl.get('Orders', { params: { $top: 5, $select: 'DocEntry,DocNum' } });
+
+// Every page of a collection, following nextLink
+const all = await sl.find<Order>('Orders', {
+  params: { $filter: "DocumentStatus eq 'bost_Open'" }
+});
+
+// Limit the number of pages
+const firstPages = await sl.find<Order>('Orders', { maxPages: 3 });
+```
+
+Every method accepts axios request options as its last argument (`params`, `headers`, `timeout`, `signal`...). For instance, to get bigger pages:
+
+```ts
+await sl.find('Orders', { headers: { Prefer: 'odata.maxpagesize=100' } });
+```
+
+### Writing
+
+```ts
+const created = await sl.post<Order>('Orders', {
+  CardCode: 'C001',
+  DocDueDate: '2026-12-01',
+  DocumentLines: [{ ItemCode: 'A001', Quantity: 1 }]
+});
+
+await sl.patch(`Orders(${created.DocEntry})`, { Comments: 'Updated' }); // partial update
+await sl.put('Items(\'A001\')', item); // full replacement
+await sl.delete('Items(\'A001\')');
+await sl.post('Orders(100)/Close'); // actions
+
+// Any other method
+await sl.request('post', 'SQLQueries(\'q1\')/List', undefined, { params: { ... } });
+```
+
+### Session
+
+```ts
+sl.sessionInfo; // { sessionId, timeoutMinutes, version } or undefined
+await sl.logout(); // the next request will log in again
+```
+
+The Service Layer timeout is an inactivity timeout. The client renews the session one minute before it expires, and if the server still rejects the session (restart, manual logout...) it logs in again and replays the request once.
+
+### Errors
+
+Every method throws a `ServiceLayerError`:
+
+```ts
+import { ServiceLayerError } from 'b1-service-layer';
+
+try {
+  await sl.get('Orders(999999)');
+} catch (error) {
+  if (error instanceof ServiceLayerError) {
+    error.kind; // 'http' | 'network' | 'client'
+    error.status; // 404
+    error.code; // -2028 (Service Layer error code)
+    error.message; // 'GET Orders(999999) failed with status 404: No matching records found (ODBC -2028)'
+    error.body; // raw response body
+  }
+}
+```
+
+## Migrating from 1.x
+
+| 1.x                                                                            | 2.x                                                     |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| `get`, `post`, `put`, `patch` returned `{ error: true, message }`              | They throw a `ServiceLayerError`                        |
+| Errors were printed with `console.error`                                       | Nothing is printed; use `debug: true` for request logs  |
+| `debug: true` printed the configuration with the password                      | The password is masked                                  |
+| `find` ignored its options on the first page and resent `params` on next pages | Options apply to every page, `params` only to the first |
+| v1 pagination (`odata.nextLink`) was not followed                              | Followed                                                |
+| `axios.defaults.withCredentials` was modified globally                         | The global axios instance is left untouched             |
+| No `delete`, `logout`                                                          | Available                                               |
+
+Code that checked `result.error` must now use `try/catch`:
 
 ```js
-    var config = {
-        "host": "http://<server>",
-        "username": "b1User",
-        "password": "b1Password",
-        "company": "b1Database",
-        // "port": 50001, // default
-        // "version": "v2", // default
-        // "debug": false // default
-    }
+// 1.x
+const order = await sl.get('Orders(1)');
+if (order.error) console.log(order.message);
+
+// 2.x
+try {
+  const order = await sl.get('Orders(1)');
+} catch (error) {
+  console.log(error.message, error.body);
+}
 ```
 
-Create a new service layer session
+## Development
 
-```javascript
-   await sl.createSession(config)
+```sh
+npm install
+npm run check   # typecheck, lint, format check, tests
+npm run build   # dist/ (ESM + CJS + types)
 ```
 
+Tests run against an in-memory imitation of the Service Layer (`test/mock-server.ts`); no SAP server is required.
+To check a real server without modifying any data:
 
-
-### Samples (with order object)
-
-```js
-/*Get an order by DocEntry*/
-var absoluteEntry = 100
-var order = await sl.get(`Orders(${absoluteEntry})`)
-
-/*
-return =>
-{
-   "@odata.context": "https://<server>:50000/b1s/v2/$metadata#Orders/$entity",
-   "DocEntry": 100,
-   "DocNum": 10,
-   "DocType": "dDocument_Items",
-   "HandWritten": "tNO",
-   "Printed": "psNo",
-   "DocDate": "2016-04-04",
-   "DocDueDate": "2016-12-02",
-   "CardCode": "customerCode",
-   "CardName": "Be... } 
-
-  OR (if error)
-  { error: true, message: "error message" }  
-*/
-
-           
-/*Get open orders by DocNum*/
-var list = await sl.get("Orders?$filter=DocumentStatus eq  'bost_Open'")
-
-/* or 
-var list = await sl.get("Orders", {
-    params: {
-     '$filter':"DocumentStatus eq  'bost_Open'")
-    }
-}
-*/
-
-/*
-return =>
- {"@odata.context": "https://<server>:50000/b1s/v2/$metadata#Orders",
-   "value": [
-      {
-         "DocEntry": 8050,
-         "DocNum": 3715, ...
-      },
-      {
-         "DocEntry": 8051,
-         "DocNum": 3716, ...
-      },
-      ...
-      ],
-  "@odata.nextLink": "Orders?$filter=DocumentStatus%20eq%20%20%27bost_Open%27&$skip=20"
- }
-      
-  OR (if error)
-  { error: true, message: "error message" }  
-*/
-
-
-/*Create new order*/
-var data = {
-    DocDate:'2020-01-01',
-    CardCode:'customerCode1',
-    DocumentLines: [
-        {ItemCode:"1122-22", Quantity: 1}
-    ],...
-}
-    
-var newOrder = await sl.post("Orders", data)
-
-
-/*Update new order*/
-var data = {
-    DocDueDate:'2020-02-01',
-}
-var newOrderUpdated = await sl.patch("Orders", data)
-
-/*Get all order without pagination (@odata.nextLink) */
-var allOrders = await sl.find("Orders")
-var allOrders = await sl.find("Orders?$filter=DocumentStatus eq  'bost_Open'")
-                
+```sh
+npm run build
+SL_HOST=https://my-server SL_COMPANY=SBODEMO SL_USER=manager SL_PASSWORD=*** node examples/smoke-test.mjs
 ```
 
+## License
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+MIT

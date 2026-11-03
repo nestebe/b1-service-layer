@@ -61,3 +61,6 @@ profile*
 *flamegraph*
 .pnpm-store
 
+
+# Build output
+dist
