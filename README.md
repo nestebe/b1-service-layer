@@ -9,7 +9,7 @@ TypeScript client for the SAP Business One Service Layer API.
 - One error type, `ServiceLayerError`, that never contains your password or session cookie
 - `ROUTEID` cookie support for load-balanced Service Layer installations
 
-Requires Node.js 18 or later.
+Requires Node.js 20 or later.
 
 ## Installation
 
@@ -138,6 +138,7 @@ try {
 | `find` ignored its options on the first page and resent `params` on next pages | Options apply to every page, `params` only to the first |
 | v1 pagination (`odata.nextLink`) was not followed                              | Followed                                                |
 | `axios.defaults.withCredentials` was modified globally                         | The global axios instance is left untouched             |
+| No minimum Node.js version declared                                            | Node.js >= 20                                           |
 | No `delete`, `logout`                                                          | Available                                               |
 
 Code that checked `result.error` must now use `try/catch`:

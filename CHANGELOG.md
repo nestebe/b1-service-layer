@@ -6,7 +6,7 @@
 
 - Methods throw a `ServiceLayerError` instead of returning `{ error: true, message }`.
 - Errors are no longer printed to the console.
-- Node.js 18 or later is required.
+- Node.js 20 or later is required (Node.js 18 is end-of-life and no longer supported by the test toolchain).
 
 ### Added
 
