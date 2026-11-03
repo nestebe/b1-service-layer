@@ -1,13 +1,44 @@
 {
   "name": "b1-service-layer",
-  "version": "1.1.0",
-  "description": "JS library for SAP Business One Service Layer API",
+  "version": "2.0.0",
+  "description": "TypeScript client for the SAP Business One Service Layer API",
   "type": "module",
-  "main": "index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": false,
   "scripts": {
-    "lint": "eslint --ignore-path .gitignore \"./**/*.js\"",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup",
+    "typecheck": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test",
+    "prepublishOnly": "npm run check && npm run build"
   },
   "repository": {
     "type": "git",
@@ -15,31 +46,32 @@
   },
   "author": "Nicolas ESTEBE",
   "license": "MIT",
-  "dependencies": {
-    "axios": "^1.5.1",
-    "dayjs": "^1.11.10"
-  },
   "keywords": [
     "sap",
     "service",
     "layer",
-    "b1"
+    "b1",
+    "sap-business-one",
+    "service-layer",
+    "odata",
+    "typescript"
   ],
   "bugs": {
     "url": "https://github.com/nestebe/b1-service-layer/issues"
   },
   "homepage": "https://github.com/nestebe/b1-service-layer#readme",
-  "directories": {
-    "test": "test"
+  "dependencies": {
+    "axios": "^1.5.1"
   },
   "devDependencies": {
-    "eslint": "^8.50.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.28.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "prettier": "^3.0.3"
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
   }
 }
