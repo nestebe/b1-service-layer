@@ -1,0 +1,35 @@
+name: Publish
+
+# Publishes to npm with trusted publishing (OIDC): no npm token is stored in GitHub.
+# Requires a Trusted Publisher configured on npmjs.com for this repository and this file.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      # Trusted publishing requires npm 11.5.1 or later.
+      - run: npm install -g npm@^11.5.1
+      - run: npm ci
+      - name: Check that the release tag matches package.json
+        if: github.event_name == 'release'
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "${GITHUB_REF_NAME#v}" != "$version" ]; then
+            echo "Release tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+      # prepublishOnly runs typecheck, lint, format check, tests and build.
+      - run: npm publish
