@@ -172,6 +172,14 @@ npm run build
 SL_HOST=https://my-server SL_COMPANY=SBODEMO SL_USER=manager SL_PASSWORD=*** node examples/smoke-test.mjs
 ```
 
+### Releasing
+
+Releases are published to npm by GitHub Actions (`.github/workflows/publish.yml`) with npm trusted publishing:
+
+1. Bump `version` in `package.json` and update `CHANGELOG.md`, then merge into `master`.
+2. Create a GitHub release with the tag `v<version>` (e.g. `v2.0.0`).
+3. The workflow checks that the tag matches `package.json`, runs all checks and publishes.
+
 ## License
 
 MIT
